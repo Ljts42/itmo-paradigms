@@ -32,6 +32,7 @@ const parse = polish => {
         } else if ('xyz'.includes(operand)) {
             stack.push(variable(operand));
         } else {
+        // :NOTE:/2 parseInt issues
             stack.push(cnst(Number.parseInt(operand)));
         }
     }
