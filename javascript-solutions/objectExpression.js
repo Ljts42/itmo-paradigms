@@ -45,7 +45,7 @@ Operation.prototype.evaluate = function(x, y, z) {
 };
 
 Operation.prototype.isConst = function() {
-    return this.args.map(arg => arg.isConst()).indexOf(false) === -1;
+    return !this.args.some(arg => !arg.isConst());
 };
 Operation.prototype.diff = function(variable) {
     return this._diff(...this.args.map(arg => arg.diff(variable))).simplify();
