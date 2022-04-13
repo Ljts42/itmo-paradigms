@@ -181,7 +181,7 @@ function Sinh(arg1) { return new Operation(
         if (a.isConst() && a.evaluate() === 0) {
             return new Const(0);
         }
-        return a;
+        return new Sinh(a);
     },
     arg1
 )}
@@ -199,7 +199,7 @@ function Cosh(arg1) { return new Operation(
         if (a.isConst() && a.evaluate() === 0) {
             return new Const(0);
         }
-        return a;
+        return new Cosh(a);
     },
     arg1
 )}
