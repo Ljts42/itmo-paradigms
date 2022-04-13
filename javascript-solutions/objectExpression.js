@@ -48,21 +48,13 @@ Operation.prototype.isConst = function() {
     return this.args.map(arg => arg.isConst()).indexOf(false) === -1;
 };
 Operation.prototype.diff = function(variable) {
-    // if (this.isConst()) {
-    //     // return new Const(this.evaluate());
-    //     return new Const(0);
-    // }
-    // println('diff ' + this._diff(variable, ...this.args.map(arg => arg.diff(variable))));
-    // return this._diff(...this.args.map(arg => arg.diff(variable))).simplify();
-    let a = this._diff(...this.args.map(arg => arg.diff(variable))).simplify();
+    let a = this._diff(...this.args.map(arg => arg.diff(variable)));
     return a;
 };
 Operation.prototype.simplify = function() {
     if (this.isConst()) {
-        // println(this.evaluate());
         return new Const(this.evaluate());
     }
-    // println(this._simplify(...this.args.map(arg => arg.simplify())));
     return this._simplify(...this.args.map(arg => arg.simplify()));
 };
 Operation.prototype.prefix = function() {
@@ -212,13 +204,6 @@ function Cosh(arg1) { return new Operation(
     arg1
 )}
 
-const e = new Const(Math.E);
-const pi = new Const(Math.PI);
-
-const constants = {
-    'e': e,
-    'pi': pi
-};
 const unary = {
     'negate': Negate,
     'sinh': Sinh,
@@ -234,9 +219,7 @@ const binary = {
 const parse = polish => {
     let stack = [];
     for (let operand of polish.split(' ').filter(str => str.length > 0)) {
-        if (operand in constants) {
-            stack.push(new constants[operand]);
-        } else if (operand in unary) {
+        if (operand in unary) {
             stack.push(new unary[operand](stack.pop()));
         } else if (operand in binary) {
             stack.push(new binary[operand](...stack.splice(-2)));
