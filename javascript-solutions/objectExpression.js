@@ -29,7 +29,7 @@ Variable.prototype.prefix = function() { return this.toString(); };
 Variable.prototype.postfix = function() { return this.toString(); };
 
 
-function Operation(sign, func, /*isConst,*/ _diff, _simplify, ...args) {
+function Operation(sign, func, _diff, _simplify, ...args) {
     this.sign = sign;
     this.func = func;
     this._diff = _diff;
@@ -48,8 +48,7 @@ Operation.prototype.isConst = function() {
     return this.args.map(arg => arg.isConst()).indexOf(false) === -1;
 };
 Operation.prototype.diff = function(variable) {
-    let a = this._diff(...this.args.map(arg => arg.diff(variable)));
-    return a;
+    return this._diff(...this.args.map(arg => arg.diff(variable))).simplify();
 };
 Operation.prototype.simplify = function() {
     if (this.isConst()) {
@@ -137,16 +136,19 @@ function Divide(arg1, arg2) { return new Operation(
     '/',
     function(a, b) { return a / b; },
     function(a, b) {
-        if (a.isConst() && b.isConst()) {
-            if (a.evaluate() === 0 && b.evaluate() === 0) {
-                return new Const(0);
-            }
-            if (b.evaluate() === 0) {
-                return new Divide(a, arg2);
-            }
+        if (a.isConst() && b.isConst() && a.evaluate() === 0 && b.evaluate() === 0) {
+            return new Const(0);
+        }
+        if (b.isConst() && b.evaluate() === 0) {
+            return new Divide(a, arg2);
+        }
+        if (a.isConst() && a.evaluate() === 0) {
             return new Divide(
                 new Negate(arg1),
-                new Multiply(arg2, arg2)
+                new Divide(
+                    new Multiply(arg2, arg2),
+                    b
+                )
             );
         }
         return new Divide(
@@ -174,7 +176,6 @@ function Sinh(arg1) { return new Operation(
         if (a.isConst() && a.evaluate() === 0) {
             return new Const(0);
         }
-        // println(new Multiply(new Cosh(arg1), a).s);
         return new Multiply(new Cosh(arg1), a);
     },
     function(a) {
