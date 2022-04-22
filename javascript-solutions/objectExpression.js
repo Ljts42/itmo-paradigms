@@ -279,7 +279,7 @@ function parsePrefix(str) {
         while (ind < str.length && str[ind] !== ')') {
             if ('xyz'.includes(str[ind])) {
                 stack.push(new Variable(str[ind++]));
-            } else if ('-0123456789'.includes(str[ind])) {
+            } else if ('-0123456789'.includes(str[ind])) {  // :NOTE: а зачем за линию, если можно сравнить с 0 и 9?
                 let num = '';
                 while (ind < str.length && '-0123456789.'.includes(str[ind])) {
                     num += str[ind++];
@@ -300,6 +300,7 @@ function parsePrefix(str) {
                 throw new parseError('Invalid unary (' + cnt + ' args)', str);
             } else if (n === 2) {
                 throw new parseError('Invalid binary (' + cnt + ' args)', str);
+                // :NOTE: ===
             } else if (n === -1 && cnt == 0) {
                 throw new parseError('Invalid multiparameter (0 args)', str);
             }
@@ -313,6 +314,7 @@ function parsePrefix(str) {
             op += str[ind];
             ind++;
         }
+        // :NOTE: дублирование кода, следовало создать мап с числом параметров (или все функции сделать multiparameter)
         if (op in unary) {
             parseParameters(1);
             stack.push(new unary[op](stack.pop()));
@@ -332,6 +334,7 @@ function parsePrefix(str) {
             throw new parseError('Unknown operation', str);
         }
         if (str[ind] === ')') {
+            // :NOTE: ===
             if (balance == 0) {
                 throw new parseError('Missing (', str);
             }
