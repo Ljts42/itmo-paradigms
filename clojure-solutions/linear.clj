@@ -68,7 +68,7 @@
 (defn m*m [& args]
   {:pre [(every? correct-matrix? args)]
    :post [(correct-matrix? %)]}
-  (reduce (fn [m1 m2]
+  (reduce (fn [m1 m2] ; :NOTE: вложенные контракты выглядят странно
       {:pre [(and (correct-matrix? m1)
                   (correct-matrix? m2)
                   (== (count (first m1)) (count m2)))]
