@@ -47,7 +47,7 @@
      'sinh sinh, 'cosh cosh}))
 
 
-;; hw-11
+; hw-11
 
 (load-file "proto.clj")
 
@@ -58,16 +58,16 @@
 (def diff (method :diff))
 
 (defclass Constant _ [value]
-  (evaluate [variables] (proto-get this :value))
-  (toString []     (str (proto-get this :value)))
-  (diff     [arg]  (Constant 0)))
+  (:evaluate [variables] (proto-get this :value))
+  (:toString []     (str (proto-get this :value)))
+  (:diff     [arg]  (Constant 0)))
 
 (def E (Constant Math/E))
 
 (defclass Variable _ [name]
-  (evaluate [variables] (get variables (proto-get this :name)))
-  (toString []     (proto-get this :name))
-  (diff     [arg]  (if (= (proto-get this :name) arg)
+  (:evaluate [variables] (get variables (proto-get this :name)))
+  (:toString []     (proto-get this :name))
+  (:diff     [arg]  (if (= (proto-get this :name) arg)
                      (Constant 1)
                      (Constant 0))))
 
